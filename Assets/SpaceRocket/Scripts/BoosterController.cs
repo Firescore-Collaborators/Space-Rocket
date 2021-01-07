@@ -92,7 +92,7 @@ public class BoosterController : MonoBehaviour
      
     }
 
-    private void SpeedUp()
+    public void SpeedUp()
     {
         speed -= boostSpeed;
         animator.SetFloat("Speed", speed);
