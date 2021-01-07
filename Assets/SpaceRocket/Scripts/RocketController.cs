@@ -18,6 +18,7 @@ public class RocketController : MonoBehaviour
     [SerializeField] float timeAfterCameZoomsOut = 1f;
 
     [SerializeField] CinemachineVirtualCamera zoomCamera;
+    [SerializeField] CinemachineVirtualCamera teslaCam;
     //public CameraShake cameraShake;
 
     [SerializeField] float boostSpeed = 0.1f;
@@ -239,6 +240,8 @@ public class RocketController : MonoBehaviour
         GameObject baase = gameObject.transform.Find("Stage1").gameObject.
         transform.Find("Base").gameObject;
 
+        baase.GetComponent<Rigidbody>().isKinematic = false;
+
         Destroy(gameObject.transform.Find("Stage1").gameObject.
         transform.Find("Flame").gameObject);
 
@@ -262,13 +265,29 @@ public class RocketController : MonoBehaviour
 
         head1Rigidbody.AddRelativeForce(finalStageSeperatioforce * transform.right);
         head2Rigidbody.AddRelativeForce(-finalStageSeperatioforce * transform.right);
-        teslaRigidbody.AddRelativeForce(teslaForce * -tesla.transform.forward);
+        teslaRigidbody.AddRelativeForce(teslaForce * Vector3.forward);
+
+        ChangeToTeslaCam();
+
+        StartCoroutine(StopTeslaCameraFollow());
         //head1Rigidbody.AddForce(finalStageSeperatioforce * -transform.right);
 
 
         //StartCoroutine(LaunchTesla(tesla));
 
         Debug.Log("Tesla Protocol End");
+    }
+
+    private IEnumerator StopTeslaCameraFollow()
+    {
+        yield return new WaitForSeconds(3f);
+        teslaCam.Follow = null;
+    }
+
+    private void ChangeToTeslaCam()
+    {
+
+        teslaCam.Priority = 100;
     }
 
     /*private IEnumerator LaunchTesla(GameObject tesla)
