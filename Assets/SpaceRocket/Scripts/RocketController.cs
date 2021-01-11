@@ -29,6 +29,8 @@ public class RocketController : MonoBehaviour
 
     [SerializeField] float teslaForce = 5f;
 
+    [SerializeField] GameObject earth;
+
     bool hasLaunched = false;
     bool speedUp = false;
 
@@ -62,7 +64,7 @@ public class RocketController : MonoBehaviour
             priority *= -1;
             StartCoroutine(SetPriority());
             //speed = animator.GetFloat("Speed");
-            SpeedUp();
+            RocketSpeedUp();
             //speedUp = true;
             //zoomCamera.Priority = 1;
         }
@@ -86,7 +88,7 @@ public class RocketController : MonoBehaviour
            // transform.Find("Stage5").gameObject.transform.Find("Trail2").gameObject.SetActive(true);
     }
 
-    private void SpeedUp()
+    private void RocketSpeedUp()
     {
         speed += boostSpeed;
         animator.SetFloat("Speed", speed);
@@ -122,7 +124,7 @@ public class RocketController : MonoBehaviour
         rb.AddForce(stageSerperationForce * Vector3.right);
         rb.angularVelocity = stageSeperationAngularVelocity;
         //speed = animator.GetFloat("Speed");
-        SpeedUp();
+        RocketSpeedUp();
         
         GameObject stage5 = gameObject.transform.Find("Stage5").gameObject;
         stage5.transform.Find("Flame").gameObject.SetActive(true);
@@ -144,7 +146,7 @@ public class RocketController : MonoBehaviour
         rb.AddForce(12f * stageSerperationForce * Vector3.right);
         rb.angularVelocity = 15 * stageSeperationAngularVelocity;
         //speed = animator.GetFloat("Speed");
-        SpeedUp();
+        RocketSpeedUp();
         
         GameObject stage4 = gameObject.transform.Find("Stage4").gameObject;
         stage4.transform.Find("Flame").gameObject.SetActive(true);
@@ -166,7 +168,7 @@ public class RocketController : MonoBehaviour
         rb.AddForce(12f * stageSerperationForce * Vector3.right);
         rb.angularVelocity = 15 * stageSeperationAngularVelocity;
         //speed = animator.GetFloat("Speed");
-        SpeedUp();
+        RocketSpeedUp();
         
         GameObject stage3 = gameObject.transform.Find("Stage3").gameObject;
         stage3.transform.Find("Flame").gameObject.SetActive(true);
@@ -188,7 +190,7 @@ public class RocketController : MonoBehaviour
         rb.AddForce(12f * stageSerperationForce * Vector3.right);
         rb.angularVelocity = 15 * stageSeperationAngularVelocity;
         //speed = animator.GetFloat("Speed");
-        SpeedUp();
+        RocketSpeedUp();
         
         GameObject stage2 = gameObject.transform.Find("Stage2").gameObject;
         stage2.transform.Find("Flame").gameObject.SetActive(true);
@@ -210,7 +212,7 @@ public class RocketController : MonoBehaviour
         rb.AddForce(12f * stageSerperationForce * Vector3.right);
         rb.angularVelocity = 15 * stageSeperationAngularVelocity;
         //speed = animator.GetFloat("Speed");
-        SpeedUp();
+        RocketSpeedUp();
         
         GameObject stage1 = gameObject.transform.Find("Stage1").gameObject;
         stage1.transform.Find("Flame").gameObject.SetActive(true);
@@ -329,5 +331,16 @@ public class RocketController : MonoBehaviour
        Destroy(booster1, 2f); 
     }
     
+    public IEnumerator ActivateEarth()
+    {
+        yield return new WaitForSeconds(3f);
+        earth.SetActive(true);
+    }
+
+    public void LastStageZoomCam()
+    {
+        priority *= -1;
+        StartCoroutine(SetPriority());
+    }
     
 }

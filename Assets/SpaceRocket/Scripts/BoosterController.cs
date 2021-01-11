@@ -24,6 +24,9 @@ public class BoosterController : MonoBehaviour
     [SerializeField] float stageSerperationForce =20f;
      [SerializeField] Vector3 stageSeperationAngularVelocity = new Vector3(4f, -3f, 2.4f);
 
+    [SerializeField] GameObject rightButton;
+    [SerializeField] GameObject leftButton;
+
     bool hasLaunched = false;
     bool speedUp = false;
 
@@ -38,6 +41,9 @@ public class BoosterController : MonoBehaviour
     ParticleSystem leftNitrogenDischarge;
 
     ParticleSystem flames;
+
+    PushButton right;
+    PushButton left;
     // Start is called before the first frame update
     void Start()
     {
@@ -60,6 +66,9 @@ public class BoosterController : MonoBehaviour
         flames = transform.Find("Stage2").
         gameObject.transform.Find("Flame2").
         gameObject.GetComponent<ParticleSystem>();
+
+        right = rightButton.GetComponent<PushButton>();
+        left = leftButton.GetComponent<PushButton>();
       //speed = animator.GetFloat("Speed");
     }
 
@@ -179,16 +188,23 @@ public class BoosterController : MonoBehaviour
 
     public void RightNitrogenDischarge()
     {
+        right.Push();
+
         rightNitrogenDischarge.gameObject.SetActive(true);
         rightNitrogenDischarge.Clear();
         rightNitrogenDischarge.Play();
+
+        
     }
 
     public void LefttNitrogenDischarge()
     {
+        left.Push();
         leftNitrogenDischarge.gameObject.SetActive(true);
         leftNitrogenDischarge.Clear();
         leftNitrogenDischarge.Play();
+
+        
     }
 
     public void FlameOn()
