@@ -7,9 +7,9 @@ public class BoosterController : MonoBehaviour
 {
     [SerializeField] Animator animator;
 
-     Animator[] panelAnimators;
+    Animator[] panelAnimators;
 
-     Animator[] standAnimators;
+    Animator[] standAnimators;
 
 
     [SerializeField] float duration = 0.1f;
@@ -19,21 +19,22 @@ public class BoosterController : MonoBehaviour
     [SerializeField] CinemachineVirtualCamera zoomCamera;
     //public CameraShake cameraShake;
 
-     [SerializeField] float boostSpeed = 0.1f;
+    [SerializeField] float boostSpeed = 0.1f;
 
-    [SerializeField] float stageSerperationForce =20f;
-     [SerializeField] Vector3 stageSeperationAngularVelocity = new Vector3(4f, -3f, 2.4f);
+    [SerializeField] float stageSerperationForce = 20f;
+    [SerializeField] Vector3 stageSeperationAngularVelocity = new Vector3(4f, -3f, 2.4f);
 
-    [SerializeField] GameObject rightButton;
-    [SerializeField] GameObject leftButton;
+    [SerializeField] GameObject diamondConfetti;
+    
+    Controller hand;
 
     bool hasLaunched = false;
     bool speedUp = false;
 
-   
+
 
     float speed = 1.0f;
-    
+
     int priority = -1;
 
     ParticleSystem rightNitrogenDischarge;
@@ -42,8 +43,8 @@ public class BoosterController : MonoBehaviour
 
     ParticleSystem flames;
 
-    PushButton right;
-    PushButton left;
+    //  PushButton right;
+    // PushButton left;
     // Start is called before the first frame update
     void Start()
     {
@@ -67,19 +68,22 @@ public class BoosterController : MonoBehaviour
         gameObject.transform.Find("Flame2").
         gameObject.GetComponent<ParticleSystem>();
 
-        right = rightButton.GetComponent<PushButton>();
-        left = leftButton.GetComponent<PushButton>();
-      //speed = animator.GetFloat("Speed");
+        hand = FindObjectOfType<Controller>();
+
+        //diamondConfetti = FindObjectOfType<>
+        //right = rightButton.GetComponent<PushButton>();
+        //left = leftButton.GetComponent<PushButton>();
+        //speed = animator.GetFloat("Speed");
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown("s"))
+        if (Input.GetKeyDown("s"))
         {
             hasLaunched = true;
             animator.SetBool("Start", true);
-            
+
             /*transform.Find("Stage5").gameObject.transform.Find("Flame").gameObject.SetActive(true);
             transform.Find("Stage5").gameObject.transform.Find("Trail").gameObject.SetActive(true);
             transform.Find("Stage5").gameObject.transform.Find("Trail1").gameObject.SetActive(true);
@@ -87,7 +91,7 @@ public class BoosterController : MonoBehaviour
             */
         }
 
-        if(hasLaunched)
+        if (hasLaunched)
         {
             hasLaunched = false;
             priority *= -1;
@@ -98,7 +102,7 @@ public class BoosterController : MonoBehaviour
             //zoomCamera.Priority = 1;
         }
 
-     
+
     }
 
     public void SpeedUp()
@@ -107,16 +111,16 @@ public class BoosterController : MonoBehaviour
         animator.SetFloat("Speed", speed);
     }
 
-    
+
 
 
     private IEnumerator SetPriority()
     {
         yield return new WaitForSeconds(timeAfterCameZoomsOut);
-        if(priority > 0)
+        if (priority > 0)
             zoomCamera.Priority = 1;
 
-        else if(priority < 0)
+        else if (priority < 0)
             zoomCamera.Priority = 99;
 
     }
@@ -138,22 +142,22 @@ public class BoosterController : MonoBehaviour
         rb.angularVelocity = stageSeperationAngularVelocity;
         //speed = animator.GetFloat("Speed");
         SpeedUp();
-        
+
         GameObject stage5 = gameObject.transform.Find("Stage5").gameObject;
         stage5.transform.Find("Flame").gameObject.SetActive(true);
         stage5.transform.Find("Trail").gameObject.SetActive(true);
         Destroy(stage6, 2f);
     }
 
-   
-    
+
+
     public void SeperateStage1()
     {
         priority *= -1;
         StartCoroutine(SetPriority());
         CinemachineShake.Instance.ShakeCamera(magnitude, duration);
         GameObject stage1 = transform.Find("Stage1").gameObject;
-//        stage1.transform.Find("Flame").gameObject.SetActive(false);
+        //        stage1.transform.Find("Flame").gameObject.SetActive(false);
 
         stage1.transform.parent = null;
         Rigidbody rb = stage1.GetComponent<Rigidbody>();
@@ -162,7 +166,7 @@ public class BoosterController : MonoBehaviour
         rb.angularVelocity = 15 * stageSeperationAngularVelocity;
         //speed = animator.GetFloat("Speed");
         SpeedUp();
-        
+
         /*GameObject stage1 = gameObject.transform.Find("Stage1").gameObject;
         stage1.transform.Find("Flame").gameObject.SetActive(true);
         stage1.transform.Find("Trail").gameObject.SetActive(true);*/
@@ -171,41 +175,59 @@ public class BoosterController : MonoBehaviour
 
     public void OpenPanels()
     {
-       // panelAnimator.SetBool("UnFold", true);
-       foreach(Animator animator in panelAnimators)
-       {
-           animator.SetBool("UnFold", true);
-       }
+        // panelAnimator.SetBool("UnFold", true);
+        foreach (Animator animator in panelAnimators)
+        {
+            animator.SetBool("UnFold", true);
+        }
     }
 
     public void OpenStands()
     {
-        foreach(Animator animator in standAnimators)
-       {
-           animator.SetBool("UnFold", true);
-       }
+        foreach (Animator animator in standAnimators)
+        {
+            animator.SetBool("UnFold", true);
+        }
     }
 
     public void RightNitrogenDischarge()
     {
-        right.Push();
+        hand.Right();
+
+        StartCoroutine(RightNitrogenDischargeDelay());
+
+
+    }
+
+    public void LefttNitrogenDischarge()
+    {
+        hand.Left();
+
+        StartCoroutine(LeftNitrogenDischargeDelay());
+
+
+
+    }
+
+    private IEnumerator RightNitrogenDischargeDelay()
+    {
+        yield return new WaitForSeconds(1.22f);
 
         rightNitrogenDischarge.gameObject.SetActive(true);
         rightNitrogenDischarge.Clear();
         rightNitrogenDischarge.Play();
 
-        
     }
 
-    public void LefttNitrogenDischarge()
+    private IEnumerator LeftNitrogenDischargeDelay()
     {
-        left.Push();
+        yield return new WaitForSeconds(1.22f);
+
         leftNitrogenDischarge.gameObject.SetActive(true);
         leftNitrogenDischarge.Clear();
         leftNitrogenDischarge.Play();
-
-        
     }
+
 
     public void FlameOn()
     {
@@ -259,5 +281,11 @@ public class BoosterController : MonoBehaviour
         transform.Find("Stage2").
         gameObject.transform.Find("Trail").
         gameObject.SetActive(true);
+    }
+
+    public void ActivateConfettiProtocol()
+    {
+        diamondConfetti.SetActive(true);
+      //  diamondConfetti1.SetActive(true);
     }
 }

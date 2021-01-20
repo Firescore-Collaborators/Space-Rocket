@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using TMPro;
+using UnityEngine.Rendering.PostProcessing;
 
 public class RocketController : MonoBehaviour
 {
@@ -19,6 +21,9 @@ public class RocketController : MonoBehaviour
 
     [SerializeField] CinemachineVirtualCamera zoomCamera;
     [SerializeField] CinemachineVirtualCamera teslaCam;
+    [SerializeField] CinemachineVirtualCamera finalZoomCam;
+    //[SerializeField] CinemachineVirtualCamera finalZoomCam;
+
     //public CameraShake cameraShake;
 
     [SerializeField] float boostSpeed = 0.1f;
@@ -31,6 +36,28 @@ public class RocketController : MonoBehaviour
 
     [SerializeField] GameObject earth;
 
+    [SerializeField] GameObject textGameObject;
+
+    [SerializeField] Animator textAnimator;
+
+    [SerializeField] GameObject textConfetti;
+
+    [SerializeField] Animator pushButton;
+
+    [SerializeField] Animator pointerAnimator;
+
+    [SerializeField] Pointer pointer;
+
+   
+
+
+    [SerializeField] PostProcessVolume powerButtonPostProcess;
+
+    [SerializeField] GameObject confetti;
+    [SerializeField] bool isConfettiScene = false;
+ 
+    Bloom bloomLayer;
+    
     bool hasLaunched = false;
     bool speedUp = false;
 
@@ -39,11 +66,13 @@ public class RocketController : MonoBehaviour
     float speed = 1.0f;
     
     int priority = -1;
+
+    [SerializeField] TextMeshProUGUI _text;
     // Start is called before the first frame update
     void Start()
     {
-        
-      //speed = animator.GetFloat("Speed");
+        powerButtonPostProcess.profile.TryGetSettings(out bloomLayer);
+        //speed = animator.GetFloat("Speed");
     }
 
     // Update is called once per frame
@@ -51,6 +80,7 @@ public class RocketController : MonoBehaviour
     {
         if(Input.GetKeyDown("s"))
         {
+            pushButton.SetTrigger("Push");
             rocketStandAnimator.SetBool("Detach", true);
 
             StartCoroutine(LaunchRocket());
@@ -85,6 +115,8 @@ public class RocketController : MonoBehaviour
 
             boosterFlame.SetActive(true);
             boosterFlame1.SetActive(true);
+
+        pointerAnimator.SetTrigger("Go");
            // transform.Find("Stage5").gameObject.transform.Find("Trail2").gameObject.SetActive(true);
     }
 
@@ -130,10 +162,17 @@ public class RocketController : MonoBehaviour
         stage5.transform.Find("Flame").gameObject.SetActive(true);
         stage5.transform.Find("Trail").gameObject.SetActive(true);
         Destroy(stage6, 2f);
+
+        
     }
 
-    public void SeperateStage5()
+    public IEnumerator SeperateStage5()
     {
+        pushButton.SetTrigger("Push");
+        yield return new WaitForSeconds(0.5f);
+
+        StartCoroutine(SwitchOFFGlow(0.3f, false));
+
         priority *= -1;
         StartCoroutine(SetPriority());
         CinemachineShake.Instance.ShakeCamera(magnitude, duration);
@@ -147,18 +186,29 @@ public class RocketController : MonoBehaviour
         rb.angularVelocity = 15 * stageSeperationAngularVelocity;
         //speed = animator.GetFloat("Speed");
         RocketSpeedUp();
+
+       
         
         GameObject stage4 = gameObject.transform.Find("Stage4").gameObject;
         stage4.transform.Find("Flame").gameObject.SetActive(true);
         stage4.transform.Find("Trail").gameObject.SetActive(true);
         Destroy(stage5, 2f);
+
+        StartCoroutine(TextPopUp("Awesome", true));
+
+        pointerAnimator.SetTrigger("4");
     }
 
-    public void SeperateStage4()
+    public IEnumerator SeperateStage4()
     {
+        //pushButton.SetTrigger("Push");
+        yield return new WaitForSeconds(0.5f);
+
+        StartCoroutine(SwitchOFFGlow(0.3f, false));
+
         priority *= -1;
         StartCoroutine(SetPriority());
-        CinemachineShake.Instance.ShakeCamera(magnitude, duration);
+        Cinemachine2Shake.Instance.ShakeCamera(magnitude, duration);
         GameObject stage4 = gameObject.transform.Find("Stage4").gameObject;
         stage4.transform.Find("Flame").gameObject.SetActive(false);
 
@@ -174,10 +224,19 @@ public class RocketController : MonoBehaviour
         stage3.transform.Find("Flame").gameObject.SetActive(true);
         stage3.transform.Find("Trail").gameObject.SetActive(true);
         Destroy(stage4, 2f);
+
+        StartCoroutine(TextPopUp("Perfect", true));
+
+        pointerAnimator.SetTrigger("3");
     }
 
-    public void SeperateStage3()
+    public IEnumerator SeperateStage3()
     {
+        pushButton.SetTrigger("Push");
+        yield return new WaitForSeconds(0.5f);
+
+        StartCoroutine(SwitchOFFGlow(0.3f,false));
+
         priority *= -1;
         StartCoroutine(SetPriority());
         CinemachineShake.Instance.ShakeCamera(magnitude, duration);
@@ -196,13 +255,22 @@ public class RocketController : MonoBehaviour
         stage2.transform.Find("Flame").gameObject.SetActive(true);
         stage2.transform.Find("Trail").gameObject.SetActive(true);
         Destroy(stage3, 2f);
+
+        StartCoroutine(TextPopUp("Amazing", true));
+
+        pointerAnimator.SetTrigger("2");
     }
     
-    public void SeperateStage2()
+    public IEnumerator SeperateStage2()
     {
+       // pushButton.SetTrigger("Push");
+        yield return new WaitForSeconds(0.5f);
+
+        StartCoroutine(SwitchOFFGlow(0.3f, true));
+
         priority *= -1;
         StartCoroutine(SetPriority());
-        CinemachineShake.Instance.ShakeCamera(magnitude, duration);
+        Cinemachine2Shake.Instance.ShakeCamera(magnitude, duration);
         GameObject stage2 = gameObject.transform.Find("Stage2").gameObject;
         stage2.transform.Find("Flame").gameObject.SetActive(false);
 
@@ -218,16 +286,28 @@ public class RocketController : MonoBehaviour
         stage1.transform.Find("Flame").gameObject.SetActive(true);
         stage1.transform.Find("Trail").gameObject.SetActive(true);
         Destroy(stage2, 2f);
+
+        StartCoroutine(TextPopUp("Awesome", true));
+
+        pointerAnimator.SetTrigger("1");
+        
     }
 
-    public void ActivateTeslaProtocol()
+    public IEnumerator ActivateTeslaProtocol()
     {
         Debug.Log("Tesla Protocol Started");
 
-       /* GameObject stage1 = gameObject.transform.Find("Stage1").gameObject;
-        stage1.transform.parent = null;
-        Rigidbody rb = stage1.GetComponent<Rigidbody>();
-        rb.isKinematic = false;*/
+        /* GameObject stage1 = gameObject.transform.Find("Stage1").gameObject;
+         stage1.transform.parent = null;
+         Rigidbody rb = stage1.GetComponent<Rigidbody>();
+         rb.isKinematic = false;*/
+        
+        pushButton.SetTrigger("Push");
+        yield return new WaitForSeconds(0.3f);
+        
+        bloomLayer.enabled.value = true;
+        StartCoroutine(SwitchOFFGlow(0.3f, false));
+
 
 
         GameObject head1 = gameObject.transform.Find("Stage1").gameObject.
@@ -272,6 +352,9 @@ public class RocketController : MonoBehaviour
         ChangeToTeslaCam();
 
         StartCoroutine(StopTeslaCameraFollow());
+
+        StartCoroutine(TextPopUp("Perfect", true));
+       
         //head1Rigidbody.AddForce(finalStageSeperatioforce * -transform.right);
 
 
@@ -289,9 +372,37 @@ public class RocketController : MonoBehaviour
     private void ChangeToTeslaCam()
     {
 
+        
+        Cinemachine3Shake.Instance.ShakeCamera(magnitude, duration);
+      // Cinemachine2Shake.Instance.ShakeCamera(magnitude, duration);
+      //  CinemachineShake.Instance.ShakeCamera(magnitude, duration);
         teslaCam.Priority = 100;
+
     }
 
+
+    private IEnumerator TextPopUp(string appreciate, bool isConfetti)
+    {
+        textGameObject.SetActive(true);
+        _text.text = appreciate.ToString();
+
+        if(isConfetti)
+        {
+            textConfetti.SetActive(true);
+        }
+
+        textAnimator.SetBool("ScaleDown", true);
+        yield return new WaitForSeconds(1.5f);
+
+        
+        textGameObject.SetActive(false);
+        textAnimator.SetBool("ScaleDown", false);
+
+        if(isConfetti)
+        {
+            textConfetti.SetActive(false);
+        }
+    }
     /*private IEnumerator LaunchTesla(GameObject tesla)
     {
         yield return new WaitForSeconds(1.5f);
@@ -302,9 +413,14 @@ public class RocketController : MonoBehaviour
         
     }*/
 
-    public void SeperateBoosters()
+    public IEnumerator SeperateBoosters()
     {
-       
+        pushButton.SetTrigger("Push");
+        yield return new WaitForSeconds(0.5f);
+
+        StartCoroutine(SwitchOFFGlow(0.3f, false));
+      
+
         CinemachineShake.Instance.ShakeCamera(magnitude, duration);
         GameObject booster = gameObject.transform.Find("Booster").gameObject;
         boosterFlame.SetActive(false);
@@ -328,19 +444,45 @@ public class RocketController : MonoBehaviour
         
         
         Destroy(booster, 2f);
-       Destroy(booster1, 2f); 
+       Destroy(booster1, 2f);
+        StartCoroutine(TextPopUp("Amazing", true));
+
+        pointerAnimator.SetTrigger("5");
     }
-    
+
+    private IEnumerator SwitchOFFGlow(float time, bool disableBloom)
+    {
+        yield return new WaitForSeconds(time);
+        pointer.DeactivateGlowEffect();
+
+        if(disableBloom)
+        bloomLayer.enabled.value = false;
+    }
+
+  
+
     public IEnumerator ActivateEarth()
     {
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(3.5f);
         earth.SetActive(true);
     }
 
     public void LastStageZoomCam()
     {
-        priority *= -1;
-        StartCoroutine(SetPriority());
+        finalZoomCam.Priority = 99;
+        //priority *= -1;
+        //StartCoroutine(SetPriority());
+    }
+
+    public IEnumerator Confetti()
+    {
+        yield return new WaitForSeconds(17f);
+
+        bloomLayer.enabled.value = false;
+        if (isConfettiScene)
+        {
+            confetti.SetActive(true);
+        }
     }
     
 }

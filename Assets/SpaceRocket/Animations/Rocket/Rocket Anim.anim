@@ -673,43 +673,57 @@ AnimationClip:
   m_HasGenericRootTransform: 1
   m_HasMotionFloatCurves: 0
   m_Events:
-  - time: 3
+  - time: 2.8333333
     functionName: SeperateBoosters
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 3.9833333
+  - time: 3.9
     functionName: SeperateStage5
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 6.9666667
+  - time: 6.883333
     functionName: SeperateStage4
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 10.016666
+  - time: 9.933333
     functionName: SeperateStage3
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 12.483334
+  - time: 12.4
     functionName: SeperateStage2
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 14.516666
+  - time: 12.416667
     functionName: LastStageZoomCam
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 14.783334
+    functionName: ActivateTeslaProtocol
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 14.8
+    functionName: Confetti
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
@@ -717,13 +731,6 @@ AnimationClip:
     messageOptions: 0
   - time: 14.816667
     functionName: ActivateEarth
-    data: 
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
-  - time: 14.833333
-    functionName: ActivateTeslaProtocol
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
